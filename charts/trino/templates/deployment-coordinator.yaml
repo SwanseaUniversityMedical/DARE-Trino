@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "trino.coordinator" . }}
+  labels:
+    app: {{ template "trino.name" . }}
+    chart: {{ template "trino.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: coordinator
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "trino.name" . }}
+      release: {{ .Release.Name }}
+      component: coordinator
+  template:
+    metadata:
+      labels:
+        app: {{ template "trino.name" . }}
+        release: {{ .Release.Name }}
+        component: coordinator
+      annotations:
+        trino-deployment-type: "coordinator"
+        {{- with .Values.coordinator.annotations }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+        {{- with .Values.secretAnnotations }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "trino.serviceAccountName" . }}
+      {{- with .Values.securityContext }}
+      {{- end }}
+      volumes:
+        - name: trino-storage
+          emptyDir: {}
+        - name: config-volume
+          configMap:
+            name: {{ template "trino.coordinator" . }}
+        - name: catalog-volume
+          configMap:
+            name: {{ template "trino.catalog" . }}
+        {{- if .Values.ranger.enabled }}
+        - name: ranger-storage
+          emptyDir: {}
+        - name: ranger-plugin
+          emptyDir: {}
+        - name: ranger-policycache
+          emptyDir: {}
+        {{- end }}
+        {{- range .Values.secretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+        {{- end }}
+        {{- with .Values.coordinator.extraVolumes }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- if or .Values.initContainers.coordinator .Values.ranger.enabled }}
+      initContainers:
+        {{- if .Values.initContainers.coordinator }}
+        {{- tpl (toYaml .Values.initContainers.coordinator) . | nindent 6 }}
+        {{- end -}}
+        {{- if .Values.ranger.enabled }}
+        {{- tpl (toYaml .Values.ranger.initContainers.coordinator) . | nindent 6 }}
+        {{- end -}}
+      {{- end }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-coordinator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.secretAnnotations }}
+          command: ['bash', '-c']
+          args: ['source /vault/secrets/minio.env && /usr/lib/trino/bin/run-trino']
+          {{- end }}
+          securityContext:
+            runAsUser: {{ .runAsUser }}
+            runAsGroup: {{ .runAsGroup }}
+          env:
+            {{- toYaml .Values.env | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/trino
+              name: trino-storage
+            - mountPath: /etc/trino/catalog
+              name: catalog-volume
+            - mountPath: /etc/trino/config.properties
+              name: config-volume
+              subPath: config.properties
+            - mountPath: /etc/trino/jvm.config
+              name: config-volume
+              subPath: jvm.config
+            - mountPath: /etc/trino/log.properties
+              name: config-volume
+              subPath: log.properties
+            - mountPath: /etc/trino/node.properties
+              name: config-volume
+              subPath: node.properties
+            {{- if .Values.ranger.enabled }}
+            - mountPath: /usr/lib/trino/plugin/ranger
+              name: ranger-storage
+            - mountPath: /etc/ranger-3.0.0-trino-plugin
+              name: ranger-plugin
+            - mountPath: /etc/ranger/trino/policycache
+              name: ranger-policycache
+            {{- end -}}
+            {{- if eq .Values.server.config.authenticationType "PASSWORD" }}
+            - mountPath: /etc/trino/password-authenticator.properties
+              name: config-volume
+              subPath: password-authenticator.properties
+            {{- end -}}
+            {{- with .Values.coordinator.extraVolumeMounts }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /v1/info
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /v1/info
+              port: http
+          resources:
+            {{- toYaml .Values.coordinator.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,10 +1,205 @@
-trino:
-  enabled: true
+# Default values for trino.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
-  image:
-    repository: harbor.ukserp.ac.uk/dare/trino
-    tag: 1.0.1
-    pullPolicy: IfNotPresent
-    pullSecret: ""
-    uid: 1001
-    gid: 1001
+image:
+  repository: alleeex/trino-test
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart version.
+  tag: "19"
+
+server:
+  workers: 2
+  node:
+    environment: production
+    dataDir: /data/trino
+    pluginDir: /usr/lib/trino/plugin
+  log:
+    trino:
+      level: INFO
+  config:
+    path: /etc/trino
+    http:
+      port: 8080
+    https:
+      enabled: false
+      port: 8443
+      keystore:
+        path: ""
+        key: ""
+    # Trino supports multiple authentication types: PASSWORD, CERTIFICATE, OAUTH2, JWT, KERBEROS
+    # For more info: https://trino.io/docs/current/security/authentication-types.html
+    authenticationType: ""
+    passwordAuthenticationProperties: {}
+    query:
+      maxMemory: "4GB"
+      maxMemoryPerNode: "1GB"
+      clientTimeout: "5m"
+    memory:
+      heapHeadroomPerNode: "1GB"
+    spillToDisk:
+      enabled: true
+      path: "/mnt/trino/data/spill"
+  exchangeManager:
+    name: "filesystem"
+    baseDir: "/tmp/trino-local-file-system-exchange-manager"
+  workerExtraConfig: ""
+  coordinatorExtraConfig: ""
+  autoscaling:
+    enabled: false
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+
+additionalNodeProperties: {}
+
+additionalConfigProperties: {}
+
+additionalLogProperties: {}
+
+additionalExchangeManagerProperties: {}
+
+eventListenerProperties: {}
+
+secretAnnotations: {}
+  # vault.hashicorp.com/agent-inject: 'true'
+  # vault.hashicorp.com/role: 'jhub-sail'
+  # vault.hashicorp.com/agent-inject-secret-ldap-config: 'internal/data/ldap/guestbook'
+  # vault.hashicorp.com/agent-inject-secret-minio-config: 'internal/data/miniooperator/sail/prod'
+  # vault.hashicorp.com/agent-inject-secret-db2-config: 'internal/data/db2/sail'
+  # vault.hashicorp.com/agent-inject-template-config: |
+  #   {{ with secret "internal/data/ldap/guestbook" -}}
+  #     export ldap_bind_dn="{{ .Data.data.bind-dn }}"
+  #     export ldap_bind_pass="{{ .Data.data.bind-password }}"
+  #   {{- end }}
+  #   {{ with secret "internal/data/miniooperator/sail/prod" -}}
+  #     export s3_access_key="{{ .Data.data.access_key }}"
+  #     export s3_secret_key="{{ .Data.data.secret_key }}"
+  #   {{- end }}
+  #   {{ with secret "internal/data/db2/sail " -}}
+  #     export db2_username="{{ .Data.data.username }}"
+  #     export db2_password="{{ .Data.data.password }}"
+  #   {{- end }}
+
+additionalCatalogs:
+    minio: |
+      connector.name = hive-hadoop2
+      hive.metastore.uri = thrift://hive-metastore:9083
+      hive.metastore.uri.selection=RANDOM
+      hive.metastore.thrift.delete-files-on-drop=true
+      hive.s3.path-style-access=true
+      hive.s3.endpoint=http://minio:9000
+      hive.s3.aws-access-key=console
+      hive.s3.aws-secret-key=console123
+      hive.non-managed-table-writes-enabled=true
+      hive.s3select-pushdown.enabled=true
+      hive.storage-format=ORC
+      hive.allow-drop-table=true
+
+# Array of EnvVar (https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#envvar-v1-core)
+env: []
+
+initContainers: {}
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  clusterHostNameOverride: ""
+  tls: []
+  host: ""
+  hosts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+auth: {}
+  # Set username and password
+  # https://trino.io/docs/current/security/password-file.html#file-format
+  # passwordAuth: "username:encrypted-password-with-htpasswd"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add to the service account
+  annotations: {}
+
+secretMounts: []
+
+coordinator:
+  annotations: {}
+  jvm:
+    maxHeapSize: "8G"
+    gcMethod:
+      type: "UseG1GC"
+      g1:
+        heapRegionSize: "32M"
+
+  additionalJVMConfig: {}
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  extraVolumes: []
+  extraVolumeMounts: []
+
+worker:
+  annotations: {}
+  jvm:
+    maxHeapSize: "8G"
+    gcMethod:
+      type: "UseG1GC"
+      g1:
+        heapRegionSize: "32M"
+
+  additionalJVMConfig: {}
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+ranger:
+  enabled: true
+  initContainers: 
+    coordinator:
+      - name: init-coordinator
+        image: alleeex/trino-init:3.0.3-ranger
+        # image: harbor.chi.swan.ac.uk/trino/trino-init:3.0.1-ranger
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /etc/trino
+            name: trino-storage
+          - mountPath: /usr/lib/trino/plugin/ranger
+            name: ranger-storage
+          - mountPath: /etc/ranger-3.0.0-trino-plugin
+            name: ranger-plugin
