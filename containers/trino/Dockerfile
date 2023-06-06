@@ -1,4 +1,4 @@
-FROM trinodb/trino:418
+FROM trinodb/trino:419
 
 LABEL org.opencontainers.image.source=https://github.com/SwanseaUniversityMedical/DARE-Trino
 
