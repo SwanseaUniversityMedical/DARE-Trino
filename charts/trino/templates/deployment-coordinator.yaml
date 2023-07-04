@@ -30,8 +30,6 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "trino.serviceAccountName" . }}
-      {{- with .Values.securityContext }}
-      {{- end }}
       volumes:
         - name: trino-storage
           emptyDir: {}
