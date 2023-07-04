@@ -75,8 +75,8 @@ spec:
           args: ['source /vault/secrets/minio.env && /usr/lib/trino/bin/run-trino']
           {{- end }}
           securityContext:
-            runAsUser: {{ .runAsUser }}
-            runAsGroup: {{ .runAsGroup }}
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+            runAsGroup: {{ .Values.securityContext.runAsGroup }}
           env:
             {{- toYaml .Values.env | nindent 12 }}
           volumeMounts:
