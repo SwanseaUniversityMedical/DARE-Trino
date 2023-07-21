@@ -126,6 +126,9 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.coordinator.resources | nindent 12 }}
+        {{- with .Values.coordinator.extraContainers }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
