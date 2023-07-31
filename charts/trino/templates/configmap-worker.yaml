@@ -66,34 +66,5 @@ data:
     {{ $configValue }}
   {{- end }}
 
-{{ if .Values.eventListenerProperties }}
-  event-listener.properties: |
-  {{- range $configValue := .Values.eventListenerProperties }}
-    {{ $configValue }}
-  {{- end }}
-{{ end }}
-
-  querylog-log4j2.xml: |
-    <?xml version="1.0" encoding="UTF-8"?>
-    <Configuration status="warn" name="TrinoQueryLog" packages="">
-        <Appenders>
-            <RollingFile name="JsonRollingFile">
-                <FileName>{{ .Values.queryLogProperties.fileName }}</FileName>
-                <FilePattern>{{ .Values.queryLogProperties.filePattern }}</FilePattern>
-                <JsonLayout charset="UTF-8" includeStacktrace="false"
-                            compact="true" eventEol="true" objectMessageAsJsonObject="true"/>
-                <Policies>
-                    <SizeBasedTriggeringPolicy size={{ .Values.queryLogProperties.sizeBasedTriggerPolicy | quote }}/>
-                </Policies>
-                <DefaultRolloverStrategy max={{ .Values.queryLogProperties.defaultRolloverStrategy | quote }}/>
-            </RollingFile>
-        </Appenders>
-
-        <Loggers>
-            <Root level="INFO">
-                <AppenderRef ref="JsonRollingFile"/>
-            </Root>
-        </Loggers>
-    </Configuration>
 
 {{- end }}

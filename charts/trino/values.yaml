@@ -14,9 +14,15 @@ server:
     environment: production
     dataDir: /data/trino
     pluginDir: /usr/lib/trino/plugin
+    logDir: /var/log
   log:
     trino:
       level: INFO
+      querylogging: 
+        enabled: false
+        fileName: trino-querylog.log
+        pattern: "/var/log/%d{yyyy-MM-dd-hh}-%i.log"
+        logPolicy: '<SizeBasedTriggeringPolicy size="10 MB"/>'
   config:
     path: /etc/trino
     http:
@@ -59,15 +65,8 @@ additionalLogProperties: {}
 additionalExchangeManagerProperties: {}
 
 eventListenerProperties: 
-  - "event-listener.name=trino-querylog"
-  - "trino.querylog.log4j2.configLocation=/etc/trino/querylog-log4j2.xml"
-
-queryLogProperties:
-  fileName: "/var/log/trino-querylog.log"
-  filePattern: "/var/log/%d{yyyy-MM-dd-hh}-%i.log"
-  sizeBasedTriggerPolicy: "10 MB"
-  defaultRolloverStrategy: "10"
-
+  event-listener.name: trino-querylog
+  trino.querylog.log4j2.configLocation: /etc/trino/querylog-log4j2.xml
 
 secretAnnotations: {}
   # vault.hashicorp.com/agent-inject: 'true'

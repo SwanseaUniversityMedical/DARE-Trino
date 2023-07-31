@@ -109,6 +109,20 @@ spec:
               name: config-volume
               subPath: password-authenticator.properties
             {{- end -}}
+            {{- if .Values.server.log.trino.querylogging.enabled }}
+            - name: varlog
+              mountPath: {{ .Values.server.node.logDir }}
+            - name: config-volume
+              mountPath: /etc/trino/event-listener.properties
+              subPath: event-listener.properties
+            {{- range $key, $value := .Values.eventListenerProperties}}
+            {{- if eq $key "trino.querylog.log4j2.configLocation" }}
+            - name: config-volume
+              mountPath: {{ $value }}
+              subPath: querylog-log4j2.xml
+            {{- end }}
+            {{- end }}
+            {{- end -}}
             {{- with .Values.coordinator.extraVolumeMounts }}
             {{- . | toYaml | nindent 12 }}
             {{- end }}
@@ -126,6 +140,19 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.coordinator.resources | nindent 12 }}
+        {{- if .Values.server.log.trino.querylogging.enabled }}  
+        - name: {{ .Chart.Name }}-coordinator-logtail
+          image: busybox
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: 
+            - sh
+            - -c
+            - |
+                tail -f {{ .Values.server.node.logDir }}/{{ .Values.server.log.trino.querylogging.fileName }}
+          volumeMounts:
+            - name: varlog
+              mountPath: {{ .Values.server.node.logDir }}
+        {{- end -}}
         {{- with .Values.coordinator.extraContainers }}
         {{- . | toYaml | nindent 8 }}
         {{- end }}
