@@ -81,18 +81,41 @@ data:
     {{ $configValue }}
   {{- end }}
 
-{{- if eq .Values.server.config.authenticationType "PASSWORD" }}
+{{-if eq .Values.server.config.authenticationType "PASSWORD" }}
   password-authenticator.properties: |
   {{- range $configName, $configValue := .Values.server.config.passwordAuthenticationProperties }}
     {{ $configName }}={{ $configValue }}
   {{- end }}
 {{- end }}
 
-{{ if .Values.eventListenerProperties }}
+{{ if and .Values.eventListenerProperties .Values.server.log.trino.querylogging.enabled }}
   event-listener.properties: |
-  {{- range $configValue := .Values.eventListenerProperties }}
-    {{ $configValue }}
+  {{- range $configName, $configValue := .Values.eventListenerProperties }}
+    {{ $configName }}={{ $configValue }}
   {{- end }}
-{{ end }}
+{{- end }}
 
----
+{{ if .Values.server.log.trino.querylogging.enabled }}
+  querylog-log4j2.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="warn" name="TrinoQueryLog" packages="">
+        <Appenders>
+            <RollingFile name="JsonRollingFile">
+                <FileName>{{ .Values.server.node.logDir }}/{{ .Values.server.log.trino.querylogging.fileName }}</FileName>
+                <FilePattern>{{ .Values.server.log.trino.querylogging.pattern }}</FilePattern>
+                <JsonLayout charset="UTF-8" includeStacktrace="false"
+                            compact="true" eventEol="true" objectMessageAsJsonObject="true"/>
+                <Policies>
+                    {{ .Values.server.log.trino.querylogging.logPolicy }}
+                </Policies>
+                <DefaultRolloverStrategy max="10"/>
+            </RollingFile>
+        </Appenders>
+
+        <Loggers>
+            <Root level="{{ .Values.server.log.trino.level }}">
+                <AppenderRef ref="JsonRollingFile"/>
+            </Root>
+        </Loggers>
+    </Configuration>
+{{- end }}

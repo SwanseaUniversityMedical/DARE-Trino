@@ -3,10 +3,10 @@
 # Declare variables to be passed into your templates.
 
 image:
-  repository: alleeex/trino-test
+  repository: harbor.ukserp.ac.uk/dare/trino
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: "19"
+  tag: "420"
 
 server:
   workers: 2
@@ -14,9 +14,15 @@ server:
     environment: production
     dataDir: /data/trino
     pluginDir: /usr/lib/trino/plugin
+    logDir: /var/log
   log:
     trino:
       level: INFO
+      querylogging: 
+        enabled: false
+        fileName: trino-querylog.log
+        pattern: "/var/log/%d{yyyy-MM-dd-hh}-%i.log"
+        logPolicy: '<SizeBasedTriggeringPolicy size="10 MB"/>'
   config:
     path: /etc/trino
     http:
@@ -58,7 +64,9 @@ additionalLogProperties: {}
 
 additionalExchangeManagerProperties: {}
 
-eventListenerProperties: {}
+eventListenerProperties: 
+  event-listener.name: trino-querylog
+  trino.querylog.log4j2.configLocation: /etc/trino/querylog-log4j2.xml
 
 secretAnnotations: {}
   # vault.hashicorp.com/agent-inject: 'true'
@@ -163,7 +171,31 @@ coordinator:
     #   memory: 128Mi
 
   extraVolumes: []
+    # - name: varlog
+    #   emptyDir: {}
+
   extraVolumeMounts: []
+    # - mountPath: /etc/trino/event-listener.properties
+    #   name: config-volume
+    #   subPath: event-listener.properties
+    # - mountPath: /etc/trino/querylog-log4j2.xml
+    #   name: config-volume
+    #   subPath: querylog-log4j2.xml
+    # - name: varlog
+    #   mountPath: /var/log
+
+  extraContainers: []
+    # - name: coordinator-logtail
+    #   image: busybox
+    #   imagePullPolicy: IfNotPresent
+    #   command: 
+    #     - sh
+    #     - -c
+    #     - |
+    #         tail -f /var/log/trino-querylog.log
+    #   volumeMounts:
+    #     - name: varlog
+    #       mountPath: /var/log
 
 worker:
   annotations: {}
@@ -189,7 +221,7 @@ worker:
     #   memory: 128Mi
 
 ranger:
-  enabled: true
+  enabled: false
   initContainers: 
     coordinator:
       - name: init-coordinator

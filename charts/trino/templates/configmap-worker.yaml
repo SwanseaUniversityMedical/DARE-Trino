@@ -66,11 +66,5 @@ data:
     {{ $configValue }}
   {{- end }}
 
-{{ if .Values.eventListenerProperties }}
-  event-listener.properties: |
-  {{- range $configValue := .Values.eventListenerProperties }}
-    {{ $configValue }}
-  {{- end }}
-{{ end }}
 
 {{- end }}
