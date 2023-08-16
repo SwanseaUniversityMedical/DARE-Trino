@@ -81,7 +81,7 @@ data:
     {{ $configValue }}
   {{- end }}
 
-{{-if eq .Values.server.config.authenticationType "PASSWORD" }}
+{{- if eq .Values.server.config.authenticationType "PASSWORD" }}
   password-authenticator.properties: |
   {{- range $configName, $configValue := .Values.server.config.passwordAuthenticationProperties }}
     {{ $configName }}={{ $configValue }}
