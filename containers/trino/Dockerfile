@@ -17,8 +17,9 @@ COPY /containers/trino/plugins/trino-trino-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR
 RUN unzip $IMPORT_PLUGIN_DIR/trino-querylog-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/trino-querylog && \
 	mv $IMPORT_PLUGIN_DIR/trino-querylog $TRINO_PLUGIN_DIR/
 
-RUN unzip $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/trino-trino && \
-	mv $IMPORT_PLUGIN_DIR/trino-trino $TRINO_PLUGIN_DIR/
+RUN unzip $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/ && \
+	mkdir $TRINO_PLUGIN_DIR/trino && \
+	mv $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION/* $TRINO_PLUGIN_DIR/trino/
 
 # Correct permissions for folder for the logging
 RUN chown 1000 /var/log
