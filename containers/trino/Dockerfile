@@ -11,10 +11,14 @@ RUN apt-get update && apt-get install -y unzip vim
 
 # Copy any extra plugin files
 COPY /containers/trino/plugins/trino-querylog-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
+COPY /containers/trino/plugins/trino-trino-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
 
 # Unzip and move extra plugins
 RUN unzip $IMPORT_PLUGIN_DIR/trino-querylog-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/trino-querylog && \
 	mv $IMPORT_PLUGIN_DIR/trino-querylog $TRINO_PLUGIN_DIR/
+
+RUN unzip $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/trino-trino && \
+	mv $IMPORT_PLUGIN_DIR/trino-trino $TRINO_PLUGIN_DIR/
 
 # Correct permissions for folder for the logging
 RUN chown 1000 /var/log
