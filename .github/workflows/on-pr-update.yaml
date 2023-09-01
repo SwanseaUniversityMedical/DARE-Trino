@@ -25,7 +25,7 @@ jobs:
       slack-thread: ${{ needs.slack.outputs.thread }}
       github-app-id: ${{ vars.APP_ID }}
       filters: |
-        container:
+        trino-container:
           - './.github/workflows/on-pr-update.yaml'
           - 'containers/trino/**'
           - 'plugins/**'
@@ -37,15 +37,15 @@ jobs:
       slack-token: ${{ secrets.SLACK_TOKEN }}
       github-app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-  build-container:
-    # Build the container and push it as :pr-42 and :pr-42-fe45b3h
+  trino-container:
+    # Build the DARE Trino container and push it as :pr-42 and :pr-42-fe45b3h
     needs:
       - slack
       - changes
-    if: fromJSON(needs.changes.outputs.changes).container == 'true'
+    if: fromJSON(needs.changes.outputs.changes).trino-container == 'true'
     uses: SwanseaUniversityMedical/workflows/.github/workflows/on-pr-update-container.yaml@v1.0.0
     with:
-      job-name: container
+      job-name: trino-container
       container-registry: ${{ vars.HARBOR_REGISTRY }}
       container-registry-user: ${{ vars.HARBOR_USER }}
       container-registry-project: ${{ vars.HARBOR_PROJECT }}
@@ -63,7 +63,7 @@ jobs:
       slack-token: ${{ secrets.SLACK_TOKEN }}
 
 
-  build-pr-chart:
+  chart:
     # Build the chart and push it as :pr-42 and :pr-42-fe45b3h
     needs:
       - slack
@@ -93,8 +93,8 @@ jobs:
     needs:
       - slack
       - changes
-      - build-container
-      - build-pr-chart
+      - trino-container
+      - chart
     uses: SwanseaUniversityMedical/workflows/.github/workflows/slack-pr-thread.yaml@v1.0.0
     if: always()
     with:
