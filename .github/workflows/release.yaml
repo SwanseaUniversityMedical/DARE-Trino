@@ -33,7 +33,7 @@ jobs:
           - 'containers/trino/**'
           - 'plugins/**'
         chart:
-           - './.github/workflows/release.yaml'
+          - './.github/workflows/release.yaml'
           - 'charts/**'
 
     secrets:
