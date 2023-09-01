@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - ci/create-new-release-ci-using-reusable-workflows
+      - main
 
 jobs:
 
@@ -65,7 +65,6 @@ jobs:
         docker build -t $IMAGE -f containers/trino/Dockerfile .
       test-command: |
         echo '0'
-      release-branches: 'ci/create-new-release-ci-using-reusable-workflows'
     secrets:
       container-registry-token: ${{ secrets.HARBOR_TOKEN }}
       slack-token: ${{ secrets.SLACK_TOKEN }}
@@ -96,7 +95,6 @@ jobs:
       chart: charts/**
       test-command: |
         helm template $CHART --values charts/trino/values.yaml
-      release-branches: 'ci/create-new-release-ci-using-reusable-workflows'
     secrets:
       chart-registry-token: ${{ secrets.HARBOR_TOKEN }}
       github-app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
