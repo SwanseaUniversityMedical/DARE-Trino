@@ -112,7 +112,7 @@ jobs:
     needs:
       - slack
       - changes
-      - api-container
+      - trino-container
       - chart
 
     uses: SwanseaUniversityMedical/workflows/.github/workflows/slack-release-thread.yaml@v2.1.0
