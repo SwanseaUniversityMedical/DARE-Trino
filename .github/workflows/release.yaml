@@ -52,7 +52,7 @@ jobs:
     if: fromJSON(needs.changes.outputs.changes).trino-container == 'true'
     uses: SwanseaUniversityMedical/workflows/.github/workflows/on-release-container.yaml@v2.1.0
     with:
-      job-name: container-trino
+      job-name: trino-container
       container-registry: ${{ vars.HARBOR_REGISTRY }}
       github-app-id: ${{ vars.APP_ID }}
       container-registry-user: ${{ vars.HARBOR_USER }}
