@@ -55,8 +55,6 @@ jobs:
       slack-thread: ${{ needs.slack.outputs.thread }}
       build-command: |
         docker build -t $IMAGE -f containers/trino/Dockerfile .
-      test-command: |
-        echo '0'
     secrets:
       container-registry-token: ${{ secrets.HARBOR_TOKEN }}
       github-app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
