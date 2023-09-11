@@ -9,7 +9,7 @@ ENV IMPORT_PLUGIN_DIR=/custom-plugins
 
 RUN apt-get update && apt-get install -y unzip vim
 
-# Copy any extra plugin files
+# Copy any extra plugin files...
 COPY /containers/trino/plugins/trino-querylog-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
 COPY /containers/trino/plugins/trino-trino-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
 
