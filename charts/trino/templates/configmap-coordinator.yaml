@@ -66,7 +66,7 @@ data:
     spill-enabled=true
     spiller-spill-path={{ .Values.server.config.spillToDisk.path }} 
   {{- end }}
-  {{ .Values.server.coordinatorExtraConfig | indent 4 }}
+  {{- .Values.server.coordinatorExtraConfig | indent 4 }}
 
   exchange-manager.properties: |
     exchange-manager.name={{ .Values.server.exchangeManager.name }}
@@ -81,7 +81,7 @@ data:
     {{ $configValue }}
   {{- end }}
 
-{{- if eq .Values.server.config.authenticationType "PASSWORD" }}
+{{- if contains "PASSWORD" .Values.server.config.authenticationType }}
   password-authenticator.properties: |
   {{- range $configName, $configValue := .Values.server.config.passwordAuthenticationProperties }}
     {{ $configName }}={{ $configValue }}
