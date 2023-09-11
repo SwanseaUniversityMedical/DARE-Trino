@@ -104,7 +104,7 @@ spec:
             - mountPath: /etc/ranger/trino/policycache
               name: ranger-policycache
             {{- end -}}
-            {{- if if contains "PASSWORD" .Values.server.config.authenticationType }}
+            {{- if contains "PASSWORD" .Values.server.config.authenticationType }}
             - mountPath: /etc/trino/password-authenticator.properties
               name: config-volume
               subPath: password-authenticator.properties
