@@ -7,7 +7,13 @@ ENV TRINO_PLUGIN_DIR=/usr/lib/trino/plugin
 ENV TRINO_VERSION=420
 ENV IMPORT_PLUGIN_DIR=/custom-plugins
 
-RUN apt-get update && apt-get install -y unzip vim
+RUN apt-get update && apt-get install -y unzip vim && mkdir /certs
+
+COPY /containers/trino/certs/*.pem /certs/
+COPY /containers/trino/scripts/import-certs.sh ./
+
+# Add certs to Java Keystore and main CA store
+RUN chmod +x ./import-certs.sh && ./import-certs.sh
 
 # Copy any extra plugin files
 COPY /containers/trino/plugins/trino-querylog-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
