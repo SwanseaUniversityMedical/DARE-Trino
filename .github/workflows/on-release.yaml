@@ -17,7 +17,7 @@ jobs:
 
   slack:
     # Open a new PR thread on Slack for this CI run
-    uses: SwanseaUniversityMedical/workflows/.github/workflows/slack-release-thread.yaml@v2.8.2
+    uses: SwanseaUniversityMedical/workflows/.github/workflows/slack-release-thread.yaml@v3.0.0
     with:
       slack-channel: ${{ vars.SLACK_CHANNEL }}
     secrets:
@@ -26,7 +26,7 @@ jobs:
   changes:
     # Detect which files have been changed on this PR's full history
     needs: slack
-    uses: SwanseaUniversityMedical/workflows/.github/workflows/changes.yaml@v2.8.2
+    uses: SwanseaUniversityMedical/workflows/.github/workflows/changes.yaml@v3.0.0
     with:
       slack-channel: ${{ vars.SLACK_CHANNEL }}
       slack-thread: ${{ needs.slack.outputs.thread }}
@@ -54,7 +54,7 @@ jobs:
       - slack
       - changes
     if: fromJSON(needs.changes.outputs.changes).trino-container == 'true'
-    uses: SwanseaUniversityMedical/workflows/.github/workflows/on-release-container.yaml@v2.8.2
+    uses: SwanseaUniversityMedical/workflows/.github/workflows/on-release-container.yaml@v3.0.0
     with:
       job-name: trino-container
       container-registry: ${{ vars.HARBOR_REGISTRY }}
@@ -83,7 +83,7 @@ jobs:
       - slack
       - changes
     if: fromJSON(needs.changes.outputs.changes).chart == 'true'
-    uses: SwanseaUniversityMedical/workflows/.github/workflows/on-release-chart.yaml@v2.8.2
+    uses: SwanseaUniversityMedical/workflows/.github/workflows/on-release-chart.yaml@v3.0.0
     with:
       job-name: chart
       chart-registry: ${{ vars.HARBOR_REGISTRY }}
@@ -115,7 +115,7 @@ jobs:
       - trino-container
       - chart
 
-    uses: SwanseaUniversityMedical/workflows/.github/workflows/slack-release-thread.yaml@v2.8.2
+    uses: SwanseaUniversityMedical/workflows/.github/workflows/slack-release-thread.yaml@v3.0.0
     if: always()
     with:
       slack-channel: ${{ vars.SLACK_CHANNEL }}
