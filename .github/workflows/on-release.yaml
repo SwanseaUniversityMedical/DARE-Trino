@@ -37,11 +37,11 @@ jobs:
       slack-thread: ${{ needs.slack.outputs.thread }}
       filters: |
         trino-container:
-          - './.github/workflows/orelease.yaml'
+          - './.github/workflows/on-release.yaml'
           - 'containers/trino/**'
           - 'plugins/**'
         chart:
-          - './.github/workflows/release.yaml'
+          - './.github/workflows/on-release.yaml'
           - 'charts/**'
 
     secrets:
