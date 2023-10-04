@@ -33,7 +33,7 @@ jobs:
       github-app-id: ${{ vars.APP_ID }}
       filters: |
         trino-container:
-          - './.github/workflows/release.yaml'
+          - './.github/workflows/orelease.yaml'
           - 'containers/trino/**'
           - 'plugins/**'
         chart:
