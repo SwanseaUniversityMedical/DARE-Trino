@@ -49,11 +49,8 @@ spec:
         - name: {{ .Chart.Name }}-worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.secretAnnotations }}
-          command: 
-            ['bash', '-c']
-          args: 
-            ['source /vault/secrets/minio.env && /usr/lib/trino/bin/run-trino']
+          {{- with .Values.entrypointOverride -}}
+          {{ . | toYaml | nindent 10 }}
           {{- end }}
           securityContext:
             runAsUser: {{ .Values.securityContext.runAsUser }}
