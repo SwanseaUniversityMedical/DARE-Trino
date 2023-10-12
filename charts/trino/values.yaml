@@ -56,6 +56,14 @@ server:
     maxReplicas: 5
     targetCPUUtilizationPercentage: 50
 
+# use this to override the standard entrypoint when you need to use the vault agent injector
+entrypointOverride: {}
+# for example, if you've had secrets injected to a file called 'secrets.env' (see line 83)
+# you make this command source the secrets file before running the main trino process
+# command: ['bash', '-c']
+# args: ['source /vault/secrets/secrets.env && /usr/lib/trino/bin/run-trino']
+
+
 additionalNodeProperties: {}
 
 additionalConfigProperties: {}
@@ -72,9 +80,9 @@ secretAnnotations: {}
   # vault.hashicorp.com/agent-inject: 'true'
   # vault.hashicorp.com/role: 'jhub-sail'
   # vault.hashicorp.com/agent-inject-secret-ldap-config: 'internal/data/ldap/guestbook'
-  # vault.hashicorp.com/agent-inject-secret-minio-config: 'internal/data/miniooperator/sail/prod'
+  # vault.hashicorp.com/agent-inject-secret-secrets.env: 'internal/data/miniooperator/sail/prod'
   # vault.hashicorp.com/agent-inject-secret-db2-config: 'internal/data/db2/sail'
-  # vault.hashicorp.com/agent-inject-template-config: |
+  # vault.hashicorp.com/agent-inject-template-secrets.env: |
   #   {{ with secret "internal/data/ldap/guestbook" -}}
   #     export ldap_bind_dn="{{ .Data.data.bind-dn }}"
   #     export ldap_bind_pass="{{ .Data.data.bind-password }}"
