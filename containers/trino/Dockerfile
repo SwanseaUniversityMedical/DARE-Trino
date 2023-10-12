@@ -28,7 +28,9 @@ RUN unzip $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DI
 	mkdir $TRINO_PLUGIN_DIR/trino && \
 	mv $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION/* $TRINO_PLUGIN_DIR/trino/
 
-RUN unzip $IMPORT_PLUGIN_DIR/trino-opa-authorizer-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/
+RUN unzip $IMPORT_PLUGIN_DIR/trino-opa-authorizer-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/ && \
+	mkdir $TRINO_PLUGIN_DIR/trino-opa-authorizer && \
+	mv $IMPORT_PLUGIN_DIR/trino-opa-authorizer-$TRINO_VERSION/* $TRINO_PLUGIN_DIR/trino-opa-authorizer/
 
 # Correct permissions for folder for the logging
 RUN chown 1000 /var/log
