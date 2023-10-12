@@ -95,14 +95,11 @@ spec:
             - mountPath: /etc/trino/node.properties
               name: config-volume
               subPath: node.properties
-            {{- if .Values.ranger.enabled }}
-            - mountPath: /usr/lib/trino/plugin/ranger
-              name: ranger-storage
-            - mountPath: /etc/ranger-3.0.0-trino-plugin
-              name: ranger-plugin
-            - mountPath: /etc/ranger/trino/policycache
-              name: ranger-policycache
-            {{- end -}}
+            {{- if .Values.server.config.accessControl.enabled }}
+            - mountPath: /etc/trino/access-control.properties
+              name: config-volume
+              subPath: access-control.properties
+            {{- end }}
             {{- if contains "PASSWORD" .Values.server.config.authenticationType }}
             - mountPath: /etc/trino/password-authenticator.properties
               name: config-volume
