@@ -37,6 +37,9 @@ server:
     # For more info: https://trino.io/docs/current/security/authentication-types.html
     authenticationType: ""
     passwordAuthenticationProperties: {}
+    accessControl:
+      enabled: false
+      properties: {}
     query:
       maxMemory: "4GB"
       maxMemoryPerNode: "1GB"

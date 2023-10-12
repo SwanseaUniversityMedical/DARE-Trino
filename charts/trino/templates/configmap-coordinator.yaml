@@ -119,3 +119,10 @@ data:
         </Loggers>
     </Configuration>
 {{- end }}
+
+{{ if .Values.server.config.accessControl.enabled }}
+  access-control.properties: |
+  {{- range $configName, $configValue := .Values.server.config.accessControl.properties }}
+    {{ $configName }}={{ $configValue }}
+  {{- end }}
+{{- end }}
