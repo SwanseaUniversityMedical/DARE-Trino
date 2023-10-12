@@ -18,6 +18,7 @@ RUN chmod +x ./import-certs.sh && ./import-certs.sh
 # Copy any extra plugin files...
 COPY /containers/trino/plugins/trino-querylog-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
 COPY /containers/trino/plugins/trino-trino-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
+COPY /containers/trino/plugins/trino-opa-authorizer-$TRINO_VERSION.zip $IMPORT_PLUGIN_DIR/
 
 # Unzip and move extra plugins
 RUN unzip $IMPORT_PLUGIN_DIR/trino-querylog-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/trino-querylog && \
@@ -26,6 +27,8 @@ RUN unzip $IMPORT_PLUGIN_DIR/trino-querylog-$TRINO_VERSION.zip -d $IMPORT_PLUGIN
 RUN unzip $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/ && \
 	mkdir $TRINO_PLUGIN_DIR/trino && \
 	mv $IMPORT_PLUGIN_DIR/trino-trino-$TRINO_VERSION/* $TRINO_PLUGIN_DIR/trino/
+
+RUN unzip $IMPORT_PLUGIN_DIR/trino-opa-authorizer-$TRINO_VERSION.zip -d $IMPORT_PLUGIN_DIR/
 
 # Correct permissions for folder for the logging
 RUN chown 1000 /var/log
