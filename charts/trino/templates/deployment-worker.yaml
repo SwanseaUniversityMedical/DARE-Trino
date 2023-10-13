@@ -9,6 +9,8 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     component: worker
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   replicas: {{ .Values.server.workers }}
   selector:
