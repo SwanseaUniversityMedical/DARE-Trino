@@ -4,10 +4,9 @@
 
 image:
   repository: harbor.ukserp.ac.uk/dare/trino
+  tag: 1.7.0
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart version.
-  tag: "420"
-
+  
 server:
   workers: 2
   node:
