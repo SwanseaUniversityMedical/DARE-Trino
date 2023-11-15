@@ -57,6 +57,7 @@ server:
     enabled: false
     maxReplicas: 5
     targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage:
 
 # use this to override the standard entrypoint when you need to use the vault agent injector
 entrypointOverride: {}
