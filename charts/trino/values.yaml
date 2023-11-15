@@ -56,7 +56,14 @@ server:
   autoscaling:
     enabled: false
     maxReplicas: 5
-    targetCPUUtilizationPercentage: 50
+    metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
+    behavior:
 
 # use this to override the standard entrypoint when you need to use the vault agent injector
 entrypointOverride: {}
