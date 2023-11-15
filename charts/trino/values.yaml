@@ -98,20 +98,20 @@ secretAnnotations: {}
   #     export db2_password="{{ .Data.data.password }}"
   #   {{- end }}
 
-additionalCatalogs:
-    minio: |
-      connector.name = hive-hadoop2
-      hive.metastore.uri = thrift://hive-metastore:9083
-      hive.metastore.uri.selection=RANDOM
-      hive.metastore.thrift.delete-files-on-drop=true
-      hive.s3.path-style-access=true
-      hive.s3.endpoint=http://minio:9000
-      hive.s3.aws-access-key=console
-      hive.s3.aws-secret-key=console123
-      hive.non-managed-table-writes-enabled=true
-      hive.s3select-pushdown.enabled=true
-      hive.storage-format=ORC
-      hive.allow-drop-table=true
+additionalCatalogs: {}
+    # minio: |
+    #   connector.name = hive-hadoop2
+    #   hive.metastore.uri = thrift://hive-metastore:9083
+    #   hive.metastore.uri.selection=RANDOM
+    #   hive.metastore.thrift.delete-files-on-drop=true
+    #   hive.s3.path-style-access=true
+    #   hive.s3.endpoint=http://minio:9000
+    #   hive.s3.aws-access-key=console
+    #   hive.s3.aws-secret-key=console123
+    #   hive.non-managed-table-writes-enabled=true
+    #   hive.s3select-pushdown.enabled=true
+    #   hive.storage-format=ORC
+    #   hive.allow-drop-table=true
 
 # Array of EnvVar (https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#envvar-v1-core)
 env: []
