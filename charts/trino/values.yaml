@@ -60,7 +60,9 @@ server:
       - type: Resource
         resource:
           name: cpu
-          targetAverageUtilization: 50
+          target:
+            type: Utilization
+            averageUtilization: 50
     behavior:
 
 # use this to override the standard entrypoint when you need to use the vault agent injector
