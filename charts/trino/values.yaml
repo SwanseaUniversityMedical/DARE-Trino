@@ -4,7 +4,7 @@
 
 image:
   repository: harbor.ukserp.ac.uk/dare/trino
-  tag: 1.7.2
+  tag: 1.7.3
   pullPolicy: IfNotPresent
   
 server:
