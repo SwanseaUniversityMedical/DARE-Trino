@@ -240,3 +240,5 @@ worker:
 metrics:
   enabled: false
 
+ranger:
+  enabled: false
