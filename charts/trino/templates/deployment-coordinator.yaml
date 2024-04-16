@@ -121,6 +121,11 @@ spec:
             {{- end }}
             {{- end }}
             {{- end -}}
+            {{- if .Values.metrics.enabled }}
+            - name: config-volume
+              mountPath: /usr/lib/trino/utils/exporter_config.yaml
+              subPath: exporter_config.yaml
+            {{- end -}}
             {{- with .Values.coordinator.extraVolumeMounts }}
             {{- . | toYaml | nindent 12 }}
             {{- end }}
@@ -128,6 +133,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /v1/info
