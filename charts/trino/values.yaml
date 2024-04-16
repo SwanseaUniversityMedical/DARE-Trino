@@ -237,18 +237,6 @@ worker:
     #   cpu: 100m
     #   memory: 128Mi
 
-ranger:
+metrics:
   enabled: false
-  initContainers: 
-    coordinator:
-      - name: init-coordinator
-        image: alleeex/trino-init:3.0.3-ranger
-        # image: harbor.chi.swan.ac.uk/trino/trino-init:3.0.1-ranger
-        imagePullPolicy: Always
-        volumeMounts:
-          - mountPath: /etc/trino
-            name: trino-storage
-          - mountPath: /usr/lib/trino/plugin/ranger
-            name: ranger-storage
-          - mountPath: /etc/ranger-3.0.0-trino-plugin
-            name: ranger-plugin
+
