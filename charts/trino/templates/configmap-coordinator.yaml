@@ -19,6 +19,7 @@ data:
 
   jvm.config: |
     -server
+    -XX:+IgnoreUnrecognizedVMOptions
     -Xmx{{ .Values.coordinator.jvm.maxHeapSize }}
     -XX:+{{ .Values.coordinator.jvm.gcMethod.type }}
     -XX:G1HeapRegionSize={{ .Values.coordinator.jvm.gcMethod.g1.heapRegionSize }}
